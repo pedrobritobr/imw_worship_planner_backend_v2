@@ -39,11 +39,11 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}{TABLE_AMBIENT}"
+    return 'About'
 
 @app.route('/about')
 def about():
-    return 'About'
+    return f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}{TABLE_AMBIENT}"
 
 if __name__ == '__main__':
     app.run(debug=True)
