@@ -3,7 +3,7 @@ from flask import Flask
 # from datetime import datetime
 # import pytz
 
-from get_envs import PROJECT_ID, DATASET_ID, TABLE_ID, TABLE_AMBIENT
+from .envs import PROJECT_ID, DATASET_ID, TABLE_ID, TABLE_AMBIENT
 
 app = Flask(__name__)
 
