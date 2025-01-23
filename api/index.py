@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify
-from datetime import datetime
-import pytz
+from flask import Flask
+# from flask import Flask, request, jsonify
+# from datetime import datetime
+# import pytz
 
 from get_envs import PROJECT_ID, DATASET_ID, TABLE_ID, TABLE_AMBIENT
 
