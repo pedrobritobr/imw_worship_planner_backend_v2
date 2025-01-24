@@ -10,7 +10,7 @@ from google.oauth2.service_account import Credentials
 
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from envs import PROJECT_ID, DATASET_ID, TABLE_ID, TABLE_AMBIENT, PLANNER_PHRASE, GCP_CREDS
 
 app = Flask(__name__)
