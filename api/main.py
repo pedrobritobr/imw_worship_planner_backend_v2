@@ -5,9 +5,13 @@ import pytz
 import pandas as pd
 import json
 
-from envs import PROJECT_ID, DATASET_ID, TABLE_ID, TABLE_AMBIENT, PLANNER_PHRASE, GCP_CREDS
 from google.cloud import bigquery
 from google.oauth2.service_account import Credentials
+
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from envs import PROJECT_ID, DATASET_ID, TABLE_ID, TABLE_AMBIENT, PLANNER_PHRASE, GCP_CREDS
 
 app = Flask(__name__)
 CORS(app)
