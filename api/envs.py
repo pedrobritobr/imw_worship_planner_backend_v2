@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-
 load_dotenv()
 
 PLANNER_PHRASE = os.getenv('PLANNER_PHRASE')
