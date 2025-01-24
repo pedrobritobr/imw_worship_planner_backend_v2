@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz
 import pandas as pd
 import json
-
+import pandas_gbq
 from google.cloud import bigquery
 from google.oauth2.service_account import Credentials
 
@@ -31,29 +31,31 @@ def insert_data(df):
         raise Exception("Failed to load credentials.")
 
     table_id = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}{TABLE_AMBIENT}"
-    client = bigquery.Client(credentials=creds, project=PROJECT_ID)
+    pandas_gbq.to_gbq(df, table_id, project_id=project_id, credentials=creds)
 
-    job_config = bigquery.LoadJobConfig(
-        schema=[
-            bigquery.SchemaField("user_name", "STRING"),
-            bigquery.SchemaField("user_email", "STRING"),
-            bigquery.SchemaField("user_church", "STRING"),
-            bigquery.SchemaField("planner_activities", "RECORD", mode="REPEATED", fields=[
-                bigquery.SchemaField("activityTitle", "STRING"),
-                bigquery.SchemaField("duration", "INTEGER"),
-                bigquery.SchemaField("hour", "STRING"),
-                bigquery.SchemaField("id", "STRING"),
-                bigquery.SchemaField("responsible", "STRING")
-            ]),
-            bigquery.SchemaField("planner_selectedDate", "DATE"),
-            bigquery.SchemaField("planner_ministerSelected", "STRING"),
-            bigquery.SchemaField("planner_worshipTitle", "STRING"),
-            bigquery.SchemaField("tsIngestion", "TIMESTAMP")
-        ],
-        write_disposition=bigquery.WriteDisposition.WRITE_APPEND
-    )
-    load_job = client.load_table_from_dataframe(df, table_id, job_config=job_config)
-    load_job.result()
+    # client = bigquery.Client(credentials=creds, project=PROJECT_ID)
+
+    # job_config = bigquery.LoadJobConfig(
+    #     schema=[
+    #         bigquery.SchemaField("user_name", "STRING"),
+    #         bigquery.SchemaField("user_email", "STRING"),
+    #         bigquery.SchemaField("user_church", "STRING"),
+    #         bigquery.SchemaField("planner_activities", "RECORD", mode="REPEATED", fields=[
+    #             bigquery.SchemaField("activityTitle", "STRING"),
+    #             bigquery.SchemaField("duration", "INTEGER"),
+    #             bigquery.SchemaField("hour", "STRING"),
+    #             bigquery.SchemaField("id", "STRING"),
+    #             bigquery.SchemaField("responsible", "STRING")
+    #         ]),
+    #         bigquery.SchemaField("planner_selectedDate", "DATE"),
+    #         bigquery.SchemaField("planner_ministerSelected", "STRING"),
+    #         bigquery.SchemaField("planner_worshipTitle", "STRING"),
+    #         bigquery.SchemaField("tsIngestion", "TIMESTAMP")
+    #     ],
+    #     write_disposition=bigquery.WriteDisposition.WRITE_APPEND
+    # )
+    # load_job = client.load_table_from_dataframe(df, table_id, job_config=job_config)
+    # load_job.result()
 
     return
 
