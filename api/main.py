@@ -4,7 +4,6 @@ from datetime import datetime
 import pytz
 import pandas as pd
 import json
-import pandas_gbq
 from google.cloud import bigquery
 from google.oauth2.service_account import Credentials
 
@@ -25,38 +24,40 @@ def read_credentials():
         print(f"Error reading credentials: {error}")
         return None
 
-def insert_data(df):
+
+def insert_data_json(df):
     creds = read_credentials()
     if not creds:
         raise Exception("Failed to load credentials.")
 
     table_id = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}{TABLE_AMBIENT}"
-    pandas_gbq.to_gbq(df, table_id, project_id=project_id, credentials=creds)
+    client = bigquery.Client(credentials=creds, project=PROJECT_ID)
 
-    # client = bigquery.Client(credentials=creds, project=PROJECT_ID)
+    records = df.to_dict(orient='records')
 
-    # job_config = bigquery.LoadJobConfig(
-    #     schema=[
-    #         bigquery.SchemaField("user_name", "STRING"),
-    #         bigquery.SchemaField("user_email", "STRING"),
-    #         bigquery.SchemaField("user_church", "STRING"),
-    #         bigquery.SchemaField("planner_activities", "RECORD", mode="REPEATED", fields=[
-    #             bigquery.SchemaField("activityTitle", "STRING"),
-    #             bigquery.SchemaField("duration", "INTEGER"),
-    #             bigquery.SchemaField("hour", "STRING"),
-    #             bigquery.SchemaField("id", "STRING"),
-    #             bigquery.SchemaField("responsible", "STRING")
-    #         ]),
-    #         bigquery.SchemaField("planner_selectedDate", "DATE"),
-    #         bigquery.SchemaField("planner_ministerSelected", "STRING"),
-    #         bigquery.SchemaField("planner_worshipTitle", "STRING"),
-    #         bigquery.SchemaField("tsIngestion", "TIMESTAMP")
-    #     ],
-    #     write_disposition=bigquery.WriteDisposition.WRITE_APPEND
-    # )
-    # load_job = client.load_table_from_dataframe(df, table_id, job_config=job_config)
-    # load_job.result()
+    job_config = bigquery.LoadJobConfig(
+        schema=[
+            bigquery.SchemaField("user_name", "STRING"),
+            bigquery.SchemaField("user_email", "STRING"),
+            bigquery.SchemaField("user_church", "STRING"),
+            bigquery.SchemaField("planner_activities", "RECORD", mode="REPEATED", fields=[
+                bigquery.SchemaField("activityTitle", "STRING"),
+                bigquery.SchemaField("duration", "INTEGER"),
+                bigquery.SchemaField("hour", "STRING"),
+                bigquery.SchemaField("id", "STRING"),
+                bigquery.SchemaField("responsible", "STRING")
+            ]),
+            bigquery.SchemaField("planner_selectedDate", "DATE"),
+            bigquery.SchemaField("planner_ministerSelected", "STRING"),
+            bigquery.SchemaField("planner_worshipTitle", "STRING"),
+            bigquery.SchemaField("tsIngestion", "TIMESTAMP")
+        ],
+        write_disposition=bigquery.WriteDisposition.WRITE_APPEND,
+        source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON
+    )
 
+    load_job = client.load_table_from_json(records, table_id, job_config=job_config)
+    load_job.result()
     return
 
 def error_logging(error):
