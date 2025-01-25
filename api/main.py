@@ -24,16 +24,13 @@ def read_credentials():
         print(f"Error reading credentials: {error}")
         return None
 
-
-def insert_data_json(df):
+def insert_data(df):
     creds = read_credentials()
     if not creds:
         raise Exception("Failed to load credentials.")
 
     table_id = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}{TABLE_AMBIENT}"
     client = bigquery.Client(credentials=creds, project=PROJECT_ID)
-
-    records = df.to_dict(orient='records')
 
     job_config = bigquery.LoadJobConfig(
         schema=[
@@ -56,6 +53,7 @@ def insert_data_json(df):
         source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON
     )
 
+    records = df.to_dict(orient='records')
     load_job = client.load_table_from_json(records, table_id, job_config=job_config)
     load_job.result()
     return
@@ -74,6 +72,9 @@ def normalize_df(df):
  
     tz = pytz.timezone('America/Sao_Paulo')
     df["tsIngestion"] = pd.to_datetime(datetime.now(tz))
+
+    df['planner_selectedDate'] = df['planner_selectedDate'].astype(str)
+    df['tsIngestion'] = df['tsIngestion'].astype(str)
 
     return df
 
@@ -115,7 +116,8 @@ def about():
     return f"{TABLE_ID}{TABLE_AMBIENT}"
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    # from mock_data import mock_data
     # headers = {
     #     "keyword": PLANNER_PHRASE
     # }
@@ -133,5 +135,3 @@ if __name__ == '__main__':
     #         print(f"Response: {response.get_json()}")
     #     else:
     #         print(f"Response: {response}")
-
-
