@@ -115,7 +115,7 @@ def home():
 def about():
     return f"{TABLE_ID}{TABLE_AMBIENT}"
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # app.run(debug=True)
     # from mock_data import mock_data
     # headers = {
