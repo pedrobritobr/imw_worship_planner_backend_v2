@@ -43,7 +43,6 @@ class BigQueryService:
             load_job.result()
 
         except Exception as error:
-            print(error)
             raise Exception(f"Failed to record table. {error}")
 
     def query_table(self, query, query_parameters):
@@ -74,4 +73,4 @@ class BigQueryService:
         query_parameters=[bigquery.ScalarQueryParameter("email", "STRING", email)]
 
         result = self.query_table(query, query_parameters)
-        return result.to_dict(orient='records')
+        return result.to_dict(orient='records')[0]

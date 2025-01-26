@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 import pytz
 from app.validations import phrase_authentication, is_valid_email, is_valid_password
-from app.security import hash_password, encrypt_text, decrypt_text
+from app.security import hash_password, validate_password, generate_jwt
 
 from app.service.BigQueryService import BigQueryService
 
@@ -34,9 +34,18 @@ def login():
 
     try:
         user = BigQueryService().get_user(email)
-        return jsonify({"message": user})
     except Exception as error:
         return jsonify({"error": f"Erro no login. {error}"}), 500
+
+    check_password = validate_password(user["password"], password)
+    if not check_password:
+        return jsonify({"error": "Senha inválida"}), 401
+
+    user.pop("password")
+    user.pop("tsIngestion")
+
+    token = generate_jwt(user)
+    return jsonify({"message": token})
 
 @user_routes.route("/", methods=["POST"])
 @phrase_authentication

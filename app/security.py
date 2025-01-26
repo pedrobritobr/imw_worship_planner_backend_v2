@@ -1,6 +1,8 @@
 from flask import current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from cryptography.fernet import Fernet
+import jwt
+from datetime import datetime
 
 def hash_password(password):
     return generate_password_hash(password)
@@ -17,3 +19,28 @@ def decrypt_text(encrypted_text):
     cipher_suite = Fernet(current_app.config.get("FERNET_KEY"))
     decrypted_email = cipher_suite.decrypt(encrypted_text.encode())
     return decrypted_email.decode()
+
+def generate_jwt(data):
+    try:
+        payload = {
+            "data": data,
+            "iat": datetime.now(),
+            "exp": None
+        }
+
+        token_key = current_app.config.get("TOKEN_KEY")
+        return jwt.encode(payload, token_key, algorithm="HS256")
+
+    except Exception as e:
+        raise Exception(f"Erro ao gerar o token JWT: {e}")
+
+def decode_jwt(token):
+    try:
+        token_key = current_app.config.get("TOKEN_KEY")
+        payload = jwt.decode(token, token_key, algorithms=["HS256"])
+        return payload
+
+    except jwt.ExpiredSignatureError:
+        raise Exception("Token expirado. Faça login novamente.")
+    except jwt.InvalidTokenError:
+        raise Exception("Token inválido. Faça login novamente.")

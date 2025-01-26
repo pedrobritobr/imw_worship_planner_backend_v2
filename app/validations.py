@@ -1,6 +1,7 @@
 from functools import wraps
 from flask import request, jsonify, current_app
 import re
+from app.security import decode_jwt
 
 def phrase_authentication(func):
     @wraps(func)
@@ -11,6 +12,19 @@ def phrase_authentication(func):
             return jsonify({"message": "Unauthorized"}), 401
 
         return func(*args, **kwargs)
+    return wrapper
+
+def validate_jwt(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            token = request.headers.get("Authorization")
+            payload = decode_jwt(token)
+            return func(payload, *args, **kwargs)
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 401
+
     return wrapper
 
 def is_valid_email(email):
