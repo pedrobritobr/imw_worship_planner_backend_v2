@@ -7,6 +7,11 @@ from flask import current_app
 
 from app.service.schemas import planner_schema, user_schema
 
+class UserNotFoundException(Exception):
+    """Exception raised when a user is not found in the database."""
+    def __init__(self):
+        super().__init__()
+
 class BigQueryService:
     def __init__(self):
         config = current_app.config
@@ -73,4 +78,7 @@ class BigQueryService:
         query_parameters=[bigquery.ScalarQueryParameter("email", "STRING", email)]
 
         result = self.query_table(query, query_parameters)
+
+        if result.empty:
+            raise UserNotFoundException()
         return result.to_dict(orient='records')[0]
