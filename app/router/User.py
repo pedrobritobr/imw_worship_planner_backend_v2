@@ -2,10 +2,10 @@ from flask import Blueprint, jsonify
 from flask import request
 from datetime import datetime
 import pytz
-from app.validations import phrase_authentication, is_valid_email, is_valid_password
-from app.security import hash_password, validate_password, generate_jwt
 
 from app.service.BigQueryService import BigQueryService, UserNotFoundException
+from app.validations import phrase_authentication, is_valid_email, is_valid_password
+from app.security import hash_password, validate_password, generate_token
 
 user_routes = Blueprint("user", __name__)
 
@@ -45,7 +45,7 @@ def login():
     user.pop("password")
     user.pop("tsIngestion")
 
-    token = generate_jwt(user)
+    token = generate_token(user)
     return jsonify({"message": token})
 
 @user_routes.route("/", methods=["POST"])
@@ -96,5 +96,5 @@ def create_user():
     user_dict.pop("password")
     user_dict.pop("tsIngestion")
 
-    token = generate_jwt(user_dict)
+    token = generate_token(user_dict)
     return jsonify({"message": token})

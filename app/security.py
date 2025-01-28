@@ -20,12 +20,12 @@ def decrypt_text(encrypted_text):
     decrypted_email = cipher_suite.decrypt(encrypted_text.encode())
     return decrypted_email.decode()
 
-def generate_jwt(data):
+def generate_token(data):
     try:
         payload = {
             "data": data,
             "iat": datetime.now(),
-            "exp": None
+            "exp": 9999999999999
         }
 
         token_key = current_app.config.get("TOKEN_KEY")
@@ -39,7 +39,10 @@ def decode_jwt(token):
         token_key = current_app.config.get("TOKEN_KEY")
         payload = jwt.decode(token, token_key, algorithms=["HS256"])
         return payload
-
+    except Exception as e:
+        raise e
+    except jwt.InvalidSignatureError:
+        raise Exception("Token inválido. Faça login novamente.")
     except jwt.ExpiredSignatureError:
         raise Exception("Token expirado. Faça login novamente.")
     except jwt.InvalidTokenError:

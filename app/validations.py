@@ -14,14 +14,13 @@ def phrase_authentication(func):
         return func(*args, **kwargs)
     return wrapper
 
-def validate_jwt(func):
+def validate_token(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
             token = request.headers.get("Authorization")
             payload = decode_jwt(token)
             return func(payload, *args, **kwargs)
-
         except Exception as e:
             return jsonify({"error": str(e)}), 401
 

@@ -65,20 +65,39 @@ class BigQueryService:
         records = planner_df.to_dict(orient='records')
         self.record_table(records, planner_schema, self.planner_table)
 
+    def get_planner(self, email: str):
+        try:
+            query = f"""
+                SELECT *
+                FROM `{self.planner_table}`
+                WHERE email = @email
+                ORDER BY tsIngestion DESC
+                LIMIT 1;
+            """
+            print(self.planner_table)
+            query_parameters=[bigquery.ScalarQueryParameter("email", "STRING", email)]
+            return self.query_table(query, query_parameters)
+        except Exception as error:
+            print(f"Error: {error}")
+            raise Exception(f"Erro ao recuperar último cronograma. Tente novamente mais tarde.")
+
     def record_user(self, user) -> None:
         self.record_table(user, user_schema, self.user_table)
 
     def get_user(self, email: str):
-        query = f"""
-            SELECT *
-            FROM `{self.user_table}`
-            WHERE email = @email
-            LIMIT 1
-        """
-        query_parameters=[bigquery.ScalarQueryParameter("email", "STRING", email)]
+        try:
+            query = f"""
+                SELECT *
+                FROM `{self.user_table}`
+                WHERE email = @email
+                LIMIT 1
+            """
+            query_parameters=[bigquery.ScalarQueryParameter("email", "STRING", email)]
 
-        result = self.query_table(query, query_parameters)
+            result = self.query_table(query, query_parameters)
 
-        if result.empty:
-            raise UserNotFoundException()
-        return result.to_dict(orient='records')[0]
+            if result.empty:
+                raise UserNotFoundException()
+            return result.to_dict(orient='records')[0]
+        except Exception as error:
+            raise Exception(f"Erro ao recuperar usuário.")
