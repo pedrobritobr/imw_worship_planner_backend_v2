@@ -8,7 +8,10 @@ from flask import current_app
 from app.service.schemas import planner_schema, user_schema
 
 class UserNotFoundException(Exception):
-    """Exception raised when a user is not found in the database."""
+    def __init__(self):
+        super().__init__()
+
+class PlannerNotFoundException(Exception):
     def __init__(self):
         super().__init__()
 
@@ -70,16 +73,22 @@ class BigQueryService:
             query = f"""
                 SELECT *
                 FROM `{self.planner_table}`
-                WHERE email = @email
+                WHERE user_email = @email
                 ORDER BY tsIngestion DESC
                 LIMIT 1;
             """
-            print(self.planner_table)
             query_parameters=[bigquery.ScalarQueryParameter("email", "STRING", email)]
-            return self.query_table(query, query_parameters)
+            result = self.query_table(query, query_parameters)
+
         except Exception as error:
             print(f"Error: {error}")
             raise Exception(f"Erro ao recuperar último cronograma. Tente novamente mais tarde.")
+
+        if result.empty:
+            raise PlannerNotFoundException()
+        result = result.astype(str)
+        return result.to_dict(orient='records')[0]
+
 
     def record_user(self, user) -> None:
         self.record_table(user, user_schema, self.user_table)
@@ -93,11 +102,11 @@ class BigQueryService:
                 LIMIT 1
             """
             query_parameters=[bigquery.ScalarQueryParameter("email", "STRING", email)]
-
             result = self.query_table(query, query_parameters)
 
-            if result.empty:
-                raise UserNotFoundException()
-            return result.to_dict(orient='records')[0]
         except Exception as error:
             raise Exception(f"Erro ao recuperar usuário.")
+        
+        if result.empty:
+            raise UserNotFoundException()
+        return result.to_dict(orient='records')[0]

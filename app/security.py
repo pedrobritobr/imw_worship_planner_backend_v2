@@ -38,7 +38,7 @@ def decode_jwt(token):
     try:
         token_key = current_app.config.get("TOKEN_KEY")
         payload = jwt.decode(token, token_key, algorithms=["HS256"])
-        return payload
+        return payload.get('data')
     except Exception as e:
         raise e
     except jwt.InvalidSignatureError:
