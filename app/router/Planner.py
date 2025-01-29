@@ -47,7 +47,7 @@ def create_planner(user):
         data = request.json.get('data')
 
         if not data:
-            return jsonify({"message": "Cronograma não recebido."}), 400
+            return jsonify({"message": "Cronograma não foi recebido."}), 400
 
         flattened_data = {
             "user_name": data["user"]["name"],
@@ -58,6 +58,12 @@ def create_planner(user):
             "planner_ministerSelected": data["planner"]["ministerSelected"],
             "planner_worshipTitle": data["planner"]["worshipTitle"]
         }
+
+        ids_on_empty_planner = ["firstActivity", "lastActivity"]
+        activities_id = [activity["id"] for activity in flattened_data["planner_activities"]]
+
+        if set(ids_on_empty_planner) == set(activities_id):
+            return jsonify({"message": "Cronograma vazio."}), 400
 
         df = pd.DataFrame([flattened_data])
         df = normalize_df(df)
