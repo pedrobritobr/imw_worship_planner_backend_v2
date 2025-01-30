@@ -71,7 +71,9 @@ class BigQueryService:
     def get_planner(self, email: str):
         try:
             query = f"""
-                SELECT *
+                SELECT
+                    * except(planner_activities),
+                    TO_JSON(planner_activities) AS planner_activities
                 FROM `{self.planner_table}`
                 WHERE user_email = @email
                 ORDER BY tsIngestion DESC
@@ -86,7 +88,7 @@ class BigQueryService:
 
         if result.empty:
             raise PlannerNotFoundException()
-        result = result.astype(str)
+
         return result.to_dict(orient='records')[0]
 
 

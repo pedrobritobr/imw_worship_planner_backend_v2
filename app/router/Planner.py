@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 import pandas as pd
+import json
 
 from app.validations import phrase_authentication, validate_token
 from app.service.BigQueryService import BigQueryService, PlannerNotFoundException
@@ -17,26 +18,23 @@ def get_planner(user):
         if not email:
             return jsonify({"message": "Usuário não autenticado."}), 401
         planner = BigQueryService().get_planner(email)
-
-        response_data = {
-            "user": {
+        planner = {
+            "activities": json.loads(planner["planner_activities"]),
+            "selectedDate": planner["planner_selectedDate"],
+            "ministerSelected": planner["planner_ministerSelected"],
+            "worshipTitle": planner["planner_worshipTitle"],
+            "creator": {
                 "name": planner["user_name"],
                 "email": planner["user_email"],
                 "church": planner["user_church"]
-            },
-            "planner": {
-                "activities": planner["planner_activities"],
-                "selectedDate": planner["planner_selectedDate"],
-                "ministerSelected": planner["planner_ministerSelected"],
-                "worshipTitle": planner["planner_worshipTitle"]
             }
         }
-
-        return jsonify({"message": response_data}), 200
+        return jsonify(planner), 200
     except PlannerNotFoundException as error:
-        print(f"{error =}")
+        print(error)
         return jsonify({"message": "Nenhum cronograma encontrado."}), 404
     except Exception as error:
+        print(error)
         return jsonify({"error": str(error)}), 500
 
 @planner_routes.route("/", methods=["POST"])
@@ -58,6 +56,10 @@ def create_planner(user):
             "planner_ministerSelected": data["planner"]["ministerSelected"],
             "planner_worshipTitle": data["planner"]["worshipTitle"]
         }
+
+        print(f"{flattened_data['planner_selectedDate']}")
+        print(f"{flattened_data['planner_ministerSelected']}")
+        print(f"{flattened_data['planner_worshipTitle']}")
 
         ids_on_empty_planner = ["firstActivity", "lastActivity"]
         activities_id = [activity["id"] for activity in flattened_data["planner_activities"]]
