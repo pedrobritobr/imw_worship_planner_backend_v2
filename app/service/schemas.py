@@ -14,6 +14,7 @@ planner_schema = [
     bigquery.SchemaField("planner_selectedDate", "DATE"),
     bigquery.SchemaField("planner_ministerSelected", "STRING"),
     bigquery.SchemaField("planner_worshipTitle", "STRING"),
+    bigquery.SchemaField("planner_churchName", "STRING"),
     bigquery.SchemaField("tsIngestion", "TIMESTAMP")
 ]
 

@@ -62,6 +62,7 @@ class BigQueryService:
             result = query_job.result()
             return result.to_dataframe()
         except Exception as error:
+            print(f"Error: {error}")
             raise Exception(f"Failed to query table. {error}")
 
     def record_planner(self, planner_df) -> None:
@@ -81,9 +82,7 @@ class BigQueryService:
             """
             query_parameters=[bigquery.ScalarQueryParameter("email", "STRING", email)]
             result = self.query_table(query, query_parameters)
-
         except Exception as error:
-            print(f"Error: {error}")
             raise Exception(f"Erro ao recuperar último cronograma. Tente novamente mais tarde.")
 
         if result.empty:
