@@ -3,9 +3,9 @@ from flask import request
 from datetime import datetime
 import pytz
 
-from service.BigQueryService import BigQueryService, UserNotFoundException
-from helpers.validations import phrase_authentication, is_valid_email, is_valid_password
-from helpers.security import hash_password, validate_password, generate_token
+from app.service.BigQueryService import BigQueryService, UserNotFoundException
+from app.validations import phrase_authentication, is_valid_email, is_valid_password
+from app.security import hash_password, validate_password, generate_token
 
 user_routes = Blueprint("user", __name__)
 

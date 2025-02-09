@@ -2,9 +2,9 @@ from flask import Blueprint, jsonify, request
 import pandas as pd
 import json
 
-from helpers.validations import phrase_authentication, validate_token
-from service.BigQueryService import BigQueryService, PlannerNotFoundException
-from helpers import normalize_df
+from app.validations import phrase_authentication, validate_token
+from app.service.BigQueryService import BigQueryService, PlannerNotFoundException
+from app.helpers import normalize_df
 
 planner_routes = Blueprint("planner", __name__)
 
