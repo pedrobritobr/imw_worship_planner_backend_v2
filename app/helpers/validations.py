@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import request, jsonify, current_app
 import re
-from app.security import decode_jwt
+from helpers.security import decode_jwt
 
 def phrase_authentication(func):
     @wraps(func)

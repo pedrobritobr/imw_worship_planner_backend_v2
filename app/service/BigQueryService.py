@@ -4,7 +4,7 @@ import json
 
 from flask import current_app
 
-from app.service.schemas import planner_schema, user_schema
+from service.schemas import planner_schema, user_schema
 
 class UserNotFoundException(Exception):
     def __init__(self):

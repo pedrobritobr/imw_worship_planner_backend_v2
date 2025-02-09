@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
-from app.config import Config
-from app.router import user_routes, planner_routes
+from helpers.config import Config
+from router import user_routes, planner_routes
 
 def create_app():
     app = Flask(__name__)
