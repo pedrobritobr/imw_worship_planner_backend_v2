@@ -2,7 +2,6 @@ from google.cloud import bigquery
 from google.oauth2.service_account import Credentials
 import json
 
-import pandas as pd
 from flask import current_app
 
 from app.service.schemas import planner_schema, user_schema
