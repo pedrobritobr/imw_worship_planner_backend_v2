@@ -1,19 +1,19 @@
 from flask import Flask
 from flask_cors import CORS
-from helpers.config import Config
-from router import user_routes, planner_routes
+# from helpers.config import Config
+# from router import user_routes, planner_routes
 
 app = Flask(__name__)
-config = Config()
-config.validate()
-app.config.from_object(config)
+# config = Config()
+# config.validate()
+# app.config.from_object(config)
 
 CORS(app)
 
 app.json.ensure_ascii=False
 
-app.register_blueprint(user_routes, url_prefix="/user")
-app.register_blueprint(planner_routes, url_prefix="/planner")
+# app.register_blueprint(user_routes, url_prefix="/user")
+# app.register_blueprint(planner_routes, url_prefix="/planner")
 
 @app.route('/')
 def home():
