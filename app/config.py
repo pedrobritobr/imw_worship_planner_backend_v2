@@ -13,6 +13,8 @@ class Config:
 
     @staticmethod
     def validate():
+        print('Validating environment variables')
         for key, value in Config.__dict__.items():
             if not key.startswith('__') and value is None:
+                print('Error:', key)
                 raise ValueError(f"Environment variable {key} is not set")
