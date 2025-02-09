@@ -1,11 +1,19 @@
-import sys
-import os
+from flask import Flask
+from flask_cors import CORS
+from helpers.config import Config
+from router import user_routes, planner_routes
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+app = Flask(__name__)
+config = Config()
+config.validate()
+app.config.from_object(config)
 
-from __init__ import create_app
+CORS(app)
 
-app = create_app()
+app.json.ensure_ascii=False
+
+app.register_blueprint(user_routes, url_prefix="/user")
+app.register_blueprint(planner_routes, url_prefix="/planner")
 
 @app.route('/')
 def home():
