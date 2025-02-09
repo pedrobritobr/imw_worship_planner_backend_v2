@@ -1,5 +1,10 @@
 from flask import Flask
 from flask_cors import CORS
+
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from helpers.config import Config
 from router import user_routes, planner_routes
 
