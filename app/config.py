@@ -7,13 +7,13 @@ load_dotenv()
 
 class Config:
     def __init__(self):
-        self.PLANNER_PHRASE = os.getenv('PLANNER_PHRASE')
-        self.GCP_CREDS = os.getenv('GCP_CREDS')
-        self.TABLE_AMBIENT = os.getenv('TABLE_AMBIENT')
-        self.DATASET_ID = os.getenv('DATASET_ID')
-        self.PROJECT_ID = os.getenv('PROJECT_ID')
-        self.FERNET_KEY = os.getenv('FERNET_KEY')
-        self.TOKEN_KEY = os.getenv('TOKEN_KEY')
+        self.PLANNER_PHRASE = os.environ.get('PLANNER_PHRASE')
+        self.GCP_CREDS = os.environ.get('GCP_CREDS')
+        self.TABLE_AMBIENT = os.environ.get('TABLE_AMBIENT')
+        self.DATASET_ID = os.environ.get('DATASET_ID')
+        self.PROJECT_ID = os.environ.get('PROJECT_ID')
+        self.FERNET_KEY = os.environ.get('FERNET_KEY')
+        self.TOKEN_KEY = os.environ.get('TOKEN_KEY')
 
         print(">> GCP_CREDS >> ", self.GCP_CREDS)
         self.validate()
