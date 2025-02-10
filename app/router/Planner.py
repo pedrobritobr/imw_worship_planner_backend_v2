@@ -17,9 +17,10 @@ def get_planner(user):
 
         if not email:
             return jsonify({"message": "Usuário não autenticado."}), 401
+
         planner = BigQueryService().get_planner(email)
         planner = {
-            "activities": json.loads(planner["planner_activities"]),
+            "activities": planner["planner_activities"],
             "selectedDate": planner["planner_selectedDate"],
             "ministerSelected": planner["planner_ministerSelected"],
             "worshipTitle": planner["planner_worshipTitle"],
@@ -30,6 +31,7 @@ def get_planner(user):
                 "church": planner["user_church"]
             }
         }
+
         return jsonify(planner), 200
     except PlannerNotFoundException as error:
         return jsonify({"message": "Nenhum cronograma encontrado."}), 404

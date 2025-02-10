@@ -15,7 +15,6 @@ class Config:
         self.FERNET_KEY = os.environ.get('FERNET_KEY')
         self.TOKEN_KEY = os.environ.get('TOKEN_KEY')
 
-        print(">> GCP_CREDS >> ", self.GCP_CREDS)
         self.validate()
 
         self.GCP_CREDS = self.get_credentials(self.GCP_CREDS)
