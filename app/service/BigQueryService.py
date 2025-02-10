@@ -1,6 +1,7 @@
 from google.cloud import bigquery
 from google.oauth2.service_account import Credentials
 import json
+import pandas as pd
 
 from flask import current_app
 
@@ -59,7 +60,8 @@ class BigQueryService:
             )
             query_job = self.client.query(query, job_config=job_config)
             result = query_job.result()
-            return result.to_dataframe()
+            rows = [dict(row) for row in result]
+            return pd.DataFrame(rows)
         except Exception as error:
             print(f"Error: {error}")
             raise Exception(f"Failed to query table. {error}")
