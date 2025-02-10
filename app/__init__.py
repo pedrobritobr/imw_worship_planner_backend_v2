@@ -7,7 +7,6 @@ from app.router import user_routes, planner_routes
 def create_app():
     app = Flask(__name__)
     config = Config()
-    config.validate()
     app.config.from_object(config)
 
     CORS(app)

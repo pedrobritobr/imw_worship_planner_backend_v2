@@ -1,6 +1,4 @@
 from google.cloud import bigquery
-from google.oauth2.service_account import Credentials
-import json
 import pandas as pd
 
 from flask import current_app
@@ -23,21 +21,12 @@ class BigQueryService:
         DATASET_ID = config.get('DATASET_ID')
         PROJECT_ID = config.get('PROJECT_ID')
 
-        cred = self.get_credentials(GCP_CREDS)
-        self.client = bigquery.Client(credentials=cred, project=PROJECT_ID)
+        self.client = bigquery.Client(credentials=GCP_CREDS, project=PROJECT_ID)
         self.dataset_id = f"{PROJECT_ID}.{DATASET_ID}"
         self.table_ambient = TABLE_AMBIENT
 
         self.user_table = f"{self.dataset_id}.user_{self.table_ambient}"
         self.planner_table = f"{self.dataset_id}.planner_{self.table_ambient}"
-
-    def get_credentials(self, GCP_CREDS):
-        try:
-            creds_dict = json.loads(GCP_CREDS)
-            creds = Credentials.from_service_account_info(creds_dict)
-            return creds
-        except Exception as error:
-            raise Exception(f"Error reading credentials {error}")
 
     def record_table(self, records, schema, table) -> None:
         try:
