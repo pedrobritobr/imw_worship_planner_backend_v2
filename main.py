@@ -4,7 +4,6 @@ app = create_app()
 
 @app.route('/')
 def home():
-    print('Hello World')
     return '@pedrobritobr'
 
 if __name__ == "__main__":

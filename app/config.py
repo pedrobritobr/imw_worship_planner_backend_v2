@@ -30,5 +30,4 @@ class Config:
     def validate(self):
         for key, value in self.__dict__.items():
             if not key.startswith('__') and value is None:
-                print('Error:', key)
                 raise ValueError(f"Environment variable {key} is not set")

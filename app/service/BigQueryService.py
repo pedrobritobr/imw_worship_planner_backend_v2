@@ -52,7 +52,6 @@ class BigQueryService:
             rows = [dict(row) for row in result]
             return pd.DataFrame(rows)
         except Exception as error:
-            print(f"Error: {error}")
             raise Exception(f"Failed to query table. {error}")
 
     def record_planner(self, planner_df) -> None:
