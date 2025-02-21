@@ -2,7 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 
 from app.config import Config
-from app.router import user_routes, planner_routes
+from app.router import user_routes, planner_routes, church_routes
 
 def create_app():
     app = Flask(__name__)
@@ -15,5 +15,6 @@ def create_app():
 
     app.register_blueprint(user_routes, url_prefix="/user")
     app.register_blueprint(planner_routes, url_prefix="/planner")
+    app.register_blueprint(church_routes, url_prefix="/church")
 
     return app

@@ -13,6 +13,10 @@ class PlannerNotFoundException(Exception):
     def __init__(self):
         super().__init__()
 
+class NoChurchFoundException(Exception):
+    def __init__(self):
+        super().__init__()
+
 class BigQueryService:
     def __init__(self):
         config = current_app.config
@@ -42,15 +46,14 @@ class BigQueryService:
         except Exception as error:
             raise Exception(f"Failed to record table. {error}")
 
-    def query_table(self, query, query_parameters):
+    def query_table(self, query, query_parameters = []) -> pd.DataFrame:
         try:
             job_config = bigquery.QueryJobConfig(
                 query_parameters=query_parameters
             )
             query_job = self.client.query(query, job_config=job_config)
             result = query_job.result()
-            rows = [dict(row) for row in result]
-            return pd.DataFrame(rows)
+            return [dict(row) for row in result]
         except Exception as error:
             raise Exception(f"Failed to query table. {error}")
 
@@ -74,11 +77,10 @@ class BigQueryService:
         except Exception as error:
             raise Exception(f"Erro ao recuperar último cronograma. Tente novamente mais tarde.")
 
-        if result.empty:
+        if not result:
             raise PlannerNotFoundException()
 
-        return result.to_dict(orient='records')[0]
-
+        return result[0]
 
     def record_user(self, user) -> None:
         self.record_table(user, user_schema, self.user_table)
@@ -96,7 +98,21 @@ class BigQueryService:
 
         except Exception as error:
             raise Exception(f"Erro ao recuperar usuário.")
-        
-        if result.empty:
+
+        if not result:
             raise UserNotFoundException()
-        return result.to_dict(orient='records')[0]
+        return result[0]
+
+    def get_churches(self):
+        try:
+            query = f"""
+                SELECT DISTINCT church
+                FROM `{self.user_table}`
+            """
+            result = self.query_table(query, [])
+        except Exception as error:
+            raise Exception(f"Erro ao recuperar igrejas cadastradas.")
+        
+        if not result:
+            raise NoChurchFoundException()
+        return result

@@ -1,6 +1,7 @@
 import pandas as pd
 from datetime import datetime
 import pytz
+import Levenshtein
 
 def normalize_df(df):
     df["planner_selectedDate"] = pd.to_datetime(df["planner_selectedDate"]).dt.date
@@ -17,3 +18,15 @@ def normalize_df(df):
     df['tsIngestion'] = df['tsIngestion'].astype(str)
 
     return df
+
+def capitalize_words(text):
+    words = text.split()
+    capitalized_words = [word.capitalize() if len(word) > 2 else word for word in words]
+    return ' '.join(capitalized_words)
+
+def deduplicate_by_similarity(strings, threshold=2):
+    result = []
+    for s in strings:
+        if not any(Levenshtein.distance(s, r) <= threshold for r in result):
+            result.append(s)
+    return result

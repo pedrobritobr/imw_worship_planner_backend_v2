@@ -1,11 +1,11 @@
-from flask import Blueprint, jsonify
-from flask import request
+from flask import Blueprint, jsonify, request
 from datetime import datetime
 import pytz
 
 from app.service.BigQueryService import BigQueryService, UserNotFoundException
 from app.validations import phrase_authentication, is_valid_email, is_valid_password
 from app.security import hash_password, validate_password, generate_token
+from app.helpers import capitalize_words
 
 user_routes = Blueprint("user", __name__)
 
@@ -36,6 +36,7 @@ def login():
     except UserNotFoundException as error:
         return jsonify({"error": "Usuário não cadastrado."}), 404
     except Exception as error:
+        print(error)
         return jsonify({"error": "Ocorreu um erro inesperado. Tente novamente mais tarde."}), 500
 
     check_password = validate_password(user["password"], password)
@@ -78,7 +79,7 @@ def create_user():
         "name": name,
         "email": email,
         "password": hashed_password,
-        "church": church,
+        "church": capitalize_words(church),
         "tsIngestion": datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
     }
 

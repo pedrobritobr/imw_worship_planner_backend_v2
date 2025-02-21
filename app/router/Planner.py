@@ -1,6 +1,5 @@
 from flask import Blueprint, jsonify, request
 import pandas as pd
-import json
 
 from app.validations import phrase_authentication, validate_token
 from app.service.BigQueryService import BigQueryService, PlannerNotFoundException
