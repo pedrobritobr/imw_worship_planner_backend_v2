@@ -76,10 +76,10 @@ def create_user():
     hashed_password = hash_password(password)
 
     user_dict = {
-        "name": name,
-        "email": email,
+        "name": name.strip(),
+        "email": email.strip(),
         "password": hashed_password,
-        "church": capitalize_words(church),
+        "church": capitalize_words(church).strip(),
         "tsIngestion": datetime.now(pytz.timezone('America/Sao_Paulo')).strftime("%Y-%m-%d %H:%M:%S")
     }
 
