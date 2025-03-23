@@ -36,7 +36,6 @@ def login():
     except UserNotFoundException as error:
         return jsonify({"error": "Usuário não cadastrado."}), 404
     except Exception as error:
-        print(error)
         return jsonify({"error": "Ocorreu um erro inesperado. Tente novamente mais tarde."}), 500
 
     check_password = validate_password(user["password"], password)

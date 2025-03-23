@@ -9,7 +9,7 @@ def phrase_authentication(func):
         user_keyword = request.headers.get('keyword')
         PLANNER_PHRASE = current_app.config.get("PLANNER_PHRASE")
         if not user_keyword or user_keyword != PLANNER_PHRASE:
-            return jsonify({"message": "Unauthorized"}), 401
+            return jsonify({"error": "Unauthorized"}), 401
 
         return func(*args, **kwargs)
     return wrapper

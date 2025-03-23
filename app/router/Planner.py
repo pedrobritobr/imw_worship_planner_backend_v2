@@ -3,7 +3,7 @@ import pandas as pd
 
 from app.validations import phrase_authentication, validate_token
 from app.service.BigQueryService import BigQueryService, PlannerNotFoundException
-from app.helpers import normalize_df
+from app.helpers import normalize_df, nested_planner
 
 planner_routes = Blueprint("planner", __name__)
 
@@ -15,27 +15,40 @@ def get_planner(user):
         email = user.get("email")
 
         if not email:
-            return jsonify({"message": "Usuário não autenticado."}), 401
+            return jsonify({"error": "Usuário não autenticado."}), 401
 
         planner = BigQueryService().get_planner(email)
-        planner = {
-            "activities": planner["planner_activities"],
-            "selectedDate": planner["planner_selectedDate"],
-            "ministerSelected": planner["planner_ministerSelected"],
-            "worshipTitle": planner["planner_worshipTitle"],
-            "churchName": planner["planner_churchName"],
-            "creator": {
-                "name": planner["user_name"],
-                "email": planner["user_email"],
-                "church": planner["user_church"]
-            }
-        }
+        planner = nested_planner(planner)
 
         return jsonify(planner), 200
     except PlannerNotFoundException as error:
-        return jsonify({"message": "Nenhum cronograma encontrado."}), 404
+        return jsonify({"error": "Nenhum cronograma encontrado."}), 404
     except Exception as error:
         return jsonify({"error": str(error)}), 500
+
+
+@planner_routes.route("/<planner_id>", methods=["GET"])
+@phrase_authentication
+@validate_token
+def get_planner_by_id(user, planner_id):
+    try:
+        email = user.get("email")
+
+        if not email:
+            return jsonify({"error": "Usuário não autenticado."}), 401
+
+        planner = BigQueryService().get_planner_by_id(planner_id)
+        if not planner:
+            return jsonify({"error": "Cronograma não encontrado."}), 404
+
+        planner = nested_planner(planner)
+
+        return jsonify(planner), 200
+    except PlannerNotFoundException as error:
+        return jsonify({"error": "Nenhum cronograma encontrado."}), 404
+    except Exception as error:
+        return jsonify({"error": str(error)}), 500
+
 
 @planner_routes.route("/", methods=["POST"])
 @phrase_authentication
@@ -45,8 +58,10 @@ def create_planner(user):
         data = request.json.get('data')
 
         if not data:
-            return jsonify({"message": "Cronograma não foi recebido."}), 400
+            return jsonify({"error": "Cronograma não foi recebido."}), 400
+
         flattened_data = {
+            "planner_id": data.get("id"),
             "planner_activities": data.get("activities"),
             "planner_selectedDate": data.get("selectedDate"),
             "planner_ministerSelected": data.get("ministerSelected"),
@@ -61,7 +76,7 @@ def create_planner(user):
         activities_id = [activity["id"] for activity in flattened_data["planner_activities"]]
 
         if set(ids_on_empty_planner) == set(activities_id):
-            return jsonify({"message": "Cronograma vazio."}), 400
+            return jsonify({"error": "Cronograma vazio."}), 400
 
         df = pd.DataFrame([flattened_data])
         df = normalize_df(df)

@@ -82,6 +82,26 @@ class BigQueryService:
 
         return result[0]
 
+    def get_planner_by_id(self, planner_id: str):
+        try:
+            query = f"""
+                SELECT
+                    * except(planner_activities),
+                    TO_JSON(planner_activities) AS planner_activities
+                FROM `{self.planner_table}`
+                WHERE planner_id = @planner_id
+                LIMIT 1;
+            """
+            query_parameters=[bigquery.ScalarQueryParameter("planner_id", "STRING", planner_id)]
+            result = self.query_table(query, query_parameters)
+        except Exception as error:
+            raise Exception(f"Erro ao recuperar cronograma. Tente novamente mais tarde.")
+
+        if not result:
+            raise PlannerNotFoundException()
+
+        return result[0]
+
     def record_user(self, user) -> None:
         self.record_table(user, user_schema, self.user_table)
 

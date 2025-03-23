@@ -1,6 +1,7 @@
 from google.cloud import bigquery
 
 planner_schema = [
+    bigquery.SchemaField("planner_id", "STRING"),
     bigquery.SchemaField("user_name", "STRING"),
     bigquery.SchemaField("user_email", "STRING"),
     bigquery.SchemaField("user_church", "STRING"),

@@ -30,3 +30,18 @@ def deduplicate_by_similarity(strings, threshold=2):
         if not any(Levenshtein.distance(s, r) <= threshold for r in result):
             result.append(s)
     return result
+
+def nested_planner(planner):
+    return {
+        "id": planner["planner_id"],
+        "activities": planner["planner_activities"],
+        "selectedDate": planner["planner_selectedDate"],
+        "ministerSelected": planner["planner_ministerSelected"],
+        "worshipTitle": planner["planner_worshipTitle"],
+        "churchName": planner["planner_churchName"],
+        "creator": {
+            "name": planner["user_name"],
+            "email": planner["user_email"],
+            "church": planner["user_church"]
+        }
+    }
