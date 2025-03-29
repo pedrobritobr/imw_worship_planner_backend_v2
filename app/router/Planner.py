@@ -38,14 +38,11 @@ def get_planner_by_id(user, planner_id):
             return jsonify({"error": "Usuário não autenticado."}), 401
 
         planner = BigQueryService().get_planner_by_id(planner_id)
-        if not planner:
-            return jsonify({"error": "Cronograma não encontrado."}), 404
-
         planner = nested_planner(planner)
 
         return jsonify(planner), 200
     except PlannerNotFoundException as error:
-        return jsonify({"error": "Nenhum cronograma encontrado."}), 404
+        return jsonify({"error": f"Cronograma encontrado | ID:{planner_id}"}), 404
     except Exception as error:
         return jsonify({"error": str(error)}), 500
 
