@@ -42,7 +42,7 @@ def get_planner_by_id(user, planner_id):
 
         return jsonify(planner), 200
     except PlannerNotFoundException as error:
-        return jsonify({"error": f"Cronograma encontrado | ID:{planner_id}"}), 404
+        return jsonify({"error": f"Cronograma não encontrado | ID:{planner_id}"}), 404
     except Exception as error:
         return jsonify({"error": str(error)}), 500
 
