@@ -3,7 +3,7 @@ import pandas as pd
 
 from flask import current_app
 
-from app.service.schemas import planner_schema, user_schema
+from app.service.schemas import planner_schema, user_schema, feedback_schema
 
 class UserNotFoundException(Exception):
     def __init__(self):
@@ -31,6 +31,7 @@ class BigQueryService:
 
         self.user_table = f"{self.dataset_id}.user_{self.table_ambient}"
         self.planner_table = f"{self.dataset_id}.planner_{self.table_ambient}"
+        self.feedback_table = f"{self.dataset_id}.feedback_{self.table_ambient}"
 
     def record_table(self, records, schema, table) -> None:
         try:
@@ -136,3 +137,6 @@ class BigQueryService:
         if not result:
             raise NoChurchFoundException()
         return result
+
+    def record_feedback(self, feedback_dict):
+        self.record_table([feedback_dict], feedback_schema, self.feedback_table)

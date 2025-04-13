@@ -16,7 +16,7 @@ planner_schema = [
     bigquery.SchemaField("planner_ministerSelected", "STRING"),
     bigquery.SchemaField("planner_worshipTitle", "STRING"),
     bigquery.SchemaField("planner_churchName", "STRING"),
-    bigquery.SchemaField("tsIngestion", "TIMESTAMP")
+    bigquery.SchemaField("tsIngestion", "TIMESTAMP", description="Horário de São Paulo/Brasil"),
 ]
 
 user_schema = [
@@ -24,5 +24,17 @@ user_schema = [
     bigquery.SchemaField("email", "STRING"),
     bigquery.SchemaField("church", "STRING"),
     bigquery.SchemaField("password", "STRING"),
-    bigquery.SchemaField("tsIngestion", "TIMESTAMP")
+    bigquery.SchemaField("tsIngestion", "TIMESTAMP", description="Horário de São Paulo/Brasil"),
+]
+
+feedback_schema = [
+    bigquery.SchemaField("feedback_id", "STRING"),
+    bigquery.SchemaField("feedback_text", "STRING"),
+    bigquery.SchemaField("user_email", "STRING"),
+    bigquery.SchemaField("image_urls", "STRING", mode="REPEATED"),
+    bigquery.SchemaField("errors", "RECORD", mode="REPEATED", fields=[
+        bigquery.SchemaField("file", "STRING"),
+        bigquery.SchemaField("reason", "STRING")
+    ]),
+    bigquery.SchemaField("tsIngestion", "TIMESTAMP", description="Horário de São Paulo/Brasil"),
 ]

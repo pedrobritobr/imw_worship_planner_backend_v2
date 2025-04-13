@@ -2,6 +2,7 @@ import pandas as pd
 from datetime import datetime
 import pytz
 import Levenshtein
+import re
 
 def normalize_df(df):
     df["planner_selectedDate"] = pd.to_datetime(df["planner_selectedDate"]).dt.date
@@ -45,3 +46,6 @@ def nested_planner(planner):
             "church": planner["user_church"]
         }
     }
+
+def sanitize_email(email: str) -> str:
+    return re.sub(r'\W', '_', email)
